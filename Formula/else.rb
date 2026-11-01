@@ -26,19 +26,24 @@ class Else < Formula
   end
 
   def install
-    bin.install "else"
+    if File.exist?("else-cli")
+      bin.install "else-cli"
+    else
+      bin.install "else" => "else-cli"
+    end
+    bin.install_symlink "else-cli" => "else"
   end
 
   def caveats
     <<~EOS
       else 的 Runtime 需要常驻，Connector 才能按计划同步、通知才能按时送达。
 
-        else onboard    准备 runtime 目录并注册后台服务
-        else doctor     检查运行状态
+        else-cli onboard    准备 runtime 目录并注册后台服务
+        else-cli doctor     检查运行状态
     EOS
   end
 
   test do
-    assert_match version.to_s, shell_output("#{bin}/else --version")
+    assert_match version.to_s, shell_output("#{bin}/else-cli --version")
   end
 end
